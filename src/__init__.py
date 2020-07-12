@@ -1,14 +1,17 @@
-from decouple import config
+from dotenv import load_dotenv
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_pymongo import PyMongo
+import os
 #from redis import Redips
 
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = config('SECRET')
-app.config["MONGO_URI"] = config('MONGODB_URI')
+load_dotenv()
 
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET')
+app.config["MONGO_URI"] = os.getenv('MONGODB_URI')
+print(app.config['SECRET_KEY'])
 mongo = PyMongo(app)
 #redis = Redis()
 socketio = SocketIO(app, cors_allowed_origins="*")
