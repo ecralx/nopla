@@ -1,11 +1,10 @@
-var BACKEND_URL = "http://10.31.105.9:5000"
+var BACKEND_URL = window.location.host
 var socket = io.connect(BACKEND_URL);
 var gameLaunched = false;
 var gameFinished = false;
 var userId;
 var gameState = {}
 var interval;
-
 
 var FULL_DASH_ARRAY = 283;
 var TIME_LIMIT = 60;
