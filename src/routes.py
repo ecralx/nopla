@@ -67,7 +67,7 @@ def on_create(data):
         # emit("join_room", {'error': 'no user id provided', 'status':'error'})
         user_id = str(uuid4())
     expression = get_random_expression()
-    sentence = expression['text']
+    sentence = expression.get('text')
     random_word = get_random_word(sentence)
     user_sentence = obfuscate_in_sentence(sentence, random_word)
     correct_answer = random_word if random_word[-1] not in [',', ':', ';'] else random_word[:-1]
@@ -110,7 +110,7 @@ def on_solve(data):
         game_state['score'] = game_state['score'] + 1
     
     next_expression = get_random_expression()
-    next_sentence = next_expression['text']
+    next_sentence = next_expression.get('text')
     next_random_word = get_random_word(next_sentence)
     next_user_sentence = obfuscate_in_sentence(next_sentence, next_random_word)
     next_correct_answer = next_random_word if next_random_word[-1] not in [',', ':', ';'] else next_random_word[:-1]
