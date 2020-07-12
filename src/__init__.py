@@ -1,15 +1,13 @@
+from decouple import config
 from flask import Flask
 from flask_socketio import SocketIO
 from flask_pymongo import PyMongo
-#from redis import Redis
+#from redis import Redips
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "secret"
-app.config["MONGO_URI"] = "mongodb://localhost:27017/nopla"
-# app.config['MONGO_DBNAME'] = "pixnguess-test"
-# app.config['MONGO_HOST'] = "localhost"
-# app.config['MONGO_PORT'] = "27017"
+app.config['SECRET_KEY'] = config('SECRET')
+app.config["MONGO_URI"] = config('MONGODB_URI')
 
 mongo = PyMongo(app)
 #redis = Redis()
