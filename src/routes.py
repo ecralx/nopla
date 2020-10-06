@@ -78,7 +78,7 @@ def on_create(data):
         'user_sentence': user_sentence,
         'correct_answer': correct_answer,
         'original_sentence': sentence,
-        'started_on': datetime.now().strftime(DATE_FORMAT),
+        'started_on': datetime.utcnow().strftime(DATE_FORMAT),
     }
     user_game_state = generate_user_game_state(game_state)
     room = game_state['user_id']
@@ -98,7 +98,7 @@ def on_solve(data):
     game_state = ROOMS.get(user_id)
     if not game_state:
         emit("update", {'error': 'user doesnt have a game_state started', 'status': 'error'})
-    if datetime.now() - datetime.strptime(game_state['started_on'], DATE_FORMAT) > THRESHOLD:
+    if datetime.utcnow() - datetime.strptime(game_state['started_on'], DATE_FORMAT) > THRESHOLD:
         emit("update", {'error': 'game finished', 'status': 'finished'})
     
     correct_answer = game_state['correct_answer']
@@ -117,7 +117,7 @@ def on_solve(data):
     game_state['user_sentence'] = next_user_sentence
     game_state['correct_answer'] = next_correct_answer
     game_state['original_sentence'] = next_sentence
-    game_state['last_time_answered'] = datetime.now().strftime(DATE_FORMAT)
+    game_state['last_time_answered'] = datetime.utcnow().strftime(DATE_FORMAT)
     
     ROOMS[user_id] = game_state
     user_game_state = generate_user_game_state(game_state)
@@ -131,7 +131,7 @@ def on_check(data):
     game_state = ROOMS.get(user_id)
     if not game_state:
         emit("update", {'error': 'user doesnt have a game_state started', 'status': 'error'})
-    if datetime.now() - datetime.strptime(game_state['started_on'], DATE_FORMAT) > THRESHOLD:
+    if datetime.utcnow() - datetime.strptime(game_state['started_on'], DATE_FORMAT) > THRESHOLD:
         emit("update", {'error': 'game finished', 'status': 'finished'})
     user_game_state = generate_user_game_state(game_state)
     emit("update", {'game_state': user_game_state, 'status': 'ok'})
