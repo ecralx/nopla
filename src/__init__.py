@@ -3,7 +3,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 from flask_pymongo import PyMongo
 import os
-#from redis import Redips
+#from redis import Redis
 
 
 load_dotenv()
