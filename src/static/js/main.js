@@ -39,7 +39,7 @@ socket.on('join_room', function(resp) {
         userId = gameState.user_id
         document.getElementById('pt1').style.display='none';
         document.getElementById('pt2-score').textContent=gameState.score
-        document.getElementById('pt2-time').textContent=Math.max(0, (60 - Math.floor(((new Date()) - (new Date(gameState.started_on))) / 1000))).toString()
+        document.getElementById('pt2-time').textContent=getRemainingTime(gameState.started_on).toString();
         document.getElementById('pt2-expression-text').textContent = gameState.user_sentence
         document.getElementById('pt2').style.display='block';
         document.getElementById('pt2-input').focus();
@@ -51,7 +51,7 @@ socket.on('update', function(resp) {
     if (resp.status == 'ok') {
         gameState = resp.game_state;
         document.getElementById('pt2-score').textContent=gameState.score;
-        var timeLeft = Math.max(0, (60 - Math.floor(((new Date()) - (new Date(gameState.started_on))) / 1000)));
+        var timeLeft = getRemainingTime(gameState.started_on);
         document.getElementById('pt2-time').textContent= timeLeft.toString();
         document.getElementById('pt2-expression-text').textContent = gameState.user_sentence
         setCircleDasharray(timeLeft);
@@ -148,4 +148,9 @@ function setBordersOnAnswer(isCorrect) {
         document.getElementById('pt2-input').classList.add('incorrect');
         document.getElementById('pt2-input').classList.remove('correct');
     }
+}
+function getRemainingTime(timeString) {
+    const now = new Date();
+    const started_on = new Date(Date.parse(timeString + ' GMT'));
+    return Math.max(0, (60 - Math.floor((now - started_on) / 1000)));
 }
