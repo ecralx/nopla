@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+    mongodb:
+        image: mongo
+        ports:
+            - "27017:27017"
+        logging:
+            driver: "none"
+    mongo-seed:
+        build: ./db
+        links:
+            - mongodb
+        logging:
+            driver: "none"
+    webserver:
+        build: .
+        volumes:
+            - ./:/app
+        ports:
+            - "8000:5000"
+        links:
+            - mongodb
+        environment:
+            FLASK_DEBUG: 1
+            FLASK_ENV: development
+            FLASK_APP: manage.py
+            MONGODB_URI: mongodb://mongodb/nopla
+            SECRET: xxxxxxxxxxxxxxxxxx
+
