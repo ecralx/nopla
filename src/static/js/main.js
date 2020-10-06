@@ -61,8 +61,8 @@ socket.on('update', function(resp) {
         window.clearInterval(interval);
         document.getElementById('pt2').style.display = 'none';
         document.getElementById('pt3').style.display = 'block';
-        document.getElementById('pt3-score').textContent = 'Tu as eu: ' + gameState.score + ' points'
-        document.getElementById('pt3-ul').innerHTML = ''
+        document.getElementById('pt3-score').textContent = gameState.score;
+        document.getElementById('pt3-ul').innerHTML = '';
         gameState.answers.forEach(function(answer) {
             const isUserAnswerCorrect = answer.is_correct;
             const node = document.createElement('li');
@@ -74,7 +74,7 @@ socket.on('update', function(resp) {
                 }
                 node.appendChild(wordSpan);
             });
-            document.getElementById('pt3-ul').appendChild(node)
+            document.getElementById('pt3-ul').appendChild(node);
         })
     }
 })
