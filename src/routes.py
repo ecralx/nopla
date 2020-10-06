@@ -3,7 +3,7 @@ from flask import render_template
 from flask_socketio import join_room, emit, send
 from random import choices
 from datetime import datetime, timedelta
-from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 from uuid import uuid4
 
 ROOMS = {}
@@ -60,6 +60,12 @@ def generate_user_game_state(game_state):
     del user_game_state['original_sentence']
     return user_game_state
 
+def getAnswerVariations(answer):
+    answer_variations = [answer]
+    if 'œ' in answer:
+        answer_variations.append(answer.replace('œ', 'oe'))
+    return answer_variations
+
 @socketio.on('create')
 def on_create(data):
     user_id = data.get('user_id')
@@ -103,7 +109,8 @@ def on_solve(data):
     
     correct_answer = game_state['correct_answer']
     original_sentence = game_state['original_sentence']
-    is_correct_answer = fuzz.WRatio(answer, correct_answer) > 90
+    correct_answer_variations = getAnswerVariations(correct_answer)
+    is_correct_answer = process.extractOne(answer, correct_answer_variations, score_cutoff=90) != None
 
     game_state['answers'].append({'answer': answer, 'sentence': reconstruct_sentence(original_sentence, answer, correct_answer), 'is_correct': is_correct_answer})
     if is_correct_answer:
