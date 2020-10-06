@@ -19,7 +19,7 @@
                     </div>
                 </div>
                 <div id="pt1-create-game">
-                    <button id="pt1-button" onclick="createGame()">Commencer !</button>
+                    <button id="pt1-button" class="btn-primary" onclick="createGame()">Commencer</button>
                 </div>
             </div>
             <div id="pt2" style="display: none">
@@ -69,13 +69,13 @@
                         onkeypress="onKeyPress(event)"
                         onsubmit="solve()"
                     />
-                    <button id="pt2-button" onclick="solve()">Answer</button>
+                    <button id="pt2-button" class="btn-primary" onclick="solve()">Répondre</button>
                 </div>
             </div>
             <div id="pt3" style="display: none">
                 <p>Bien joué !</p>
-                <p id="pt3-score"></p>
-                <button id="pt3-replay" onclick="replay()">Rejouer</button>
+                <p>Tu as marqué <span id="pt3-score"></span> points !</p>
+                <button id="pt3-replay" class="btn-primary" onclick="replay()">Rejouer</button>
                 <div id="pt3-answers">
                     <ul id="pt3-ul"></ul>
                 </div>
