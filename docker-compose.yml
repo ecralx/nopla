@@ -12,6 +12,16 @@ services:
             - mongodb
         logging:
             driver: "none"
+    redis:
+        image: 'docker.io/bitnami/redis:6.0-debian-10'
+        environment:
+            # ALLOW_EMPTY_PASSWORD is recommended only for development.
+            - ALLOW_EMPTY_PASSWORD=yes
+            - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+        ports:
+            - '6379:6379'
+        logging:
+            driver: "none"
     webserver:
         build: .
         volumes:
@@ -20,10 +30,12 @@ services:
             - "8000:5000"
         links:
             - mongodb
+            - redis
         environment:
             FLASK_DEBUG: 1
             FLASK_ENV: development
             FLASK_APP: manage.py
             MONGODB_URI: mongodb://mongodb/nopla
+            REDIS_URL: 'redis://redis:6379'
             SECRET: xxxxxxxxxxxxxxxxxx
 

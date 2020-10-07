@@ -1,4 +1,5 @@
-from src import app, socketio, mongo
+import json
+from src import app, socketio, mongo, redis
 from flask import render_template
 from flask_socketio import join_room, emit, send
 from random import choices
@@ -6,7 +7,6 @@ from datetime import datetime, timedelta
 from fuzzywuzzy import process
 from uuid import uuid4
 
-ROOMS = {}
 DATE_FORMAT = "%Y/%m/%d %H:%M:%S"
 THRESHOLD = timedelta(seconds=60)
 HINT_THRESHOLD = timedelta(seconds=2)
@@ -87,9 +87,9 @@ def on_create(data):
         'started_on': datetime.utcnow().strftime(DATE_FORMAT),
     }
     user_game_state = generate_user_game_state(game_state)
-    room = game_state['user_id']
-    ROOMS[room] = game_state
-    join_room(room)
+    room_id = game_state['user_id']
+    redis.set(room_id, json.dumps(game_state), ex=THRESHOLD * 2)
+    join_room(room_id)
     emit("join_room", {'game_state': user_game_state, 'status': 'ok'})
 
 @socketio.on('solve')
@@ -101,9 +101,10 @@ def on_solve(data):
     if not answer:
         emit("update", {'error': 'no answer provided', 'status': 'error'})
 
-    game_state = ROOMS.get(user_id)
-    if not game_state:
+    if not redis.exists(user_id):
         emit("update", {'error': 'user doesnt have a game_state started', 'status': 'error'})
+    game_state = json.loads(redis.get(user_id))
+
     if datetime.utcnow() - datetime.strptime(game_state['started_on'], DATE_FORMAT) > THRESHOLD:
         emit("update", {'error': 'game finished', 'status': 'finished'})
     
@@ -126,7 +127,7 @@ def on_solve(data):
     game_state['original_sentence'] = next_sentence
     game_state['last_time_answered'] = datetime.utcnow().strftime(DATE_FORMAT)
     
-    ROOMS[user_id] = game_state
+    redis.set(user_id, json.dumps(game_state), ex=2*THRESHOLD)
     user_game_state = generate_user_game_state(game_state)
     emit("update", {'game_state': user_game_state, 'status': 'ok'})
 
@@ -135,9 +136,10 @@ def on_check(data):
     user_id = data.get('user_id')
     if not user_id:
         emit("update", {'error': 'no user id provided', 'status': 'error'})
-    game_state = ROOMS.get(user_id)
-    if not game_state:
+    if not redis.exists(user_id):
         emit("update", {'error': 'user doesnt have a game_state started', 'status': 'error'})
+    
+    game_state = json.loads(redis.get(user_id))
     if datetime.utcnow() - datetime.strptime(game_state['started_on'], DATE_FORMAT) > THRESHOLD:
         emit("update", {'error': 'game finished', 'status': 'finished'})
     user_game_state = generate_user_game_state(game_state)
