@@ -111,7 +111,7 @@ def on_solve(data):
     correct_answer = game_state['correct_answer']
     original_sentence = game_state['original_sentence']
     correct_answer_variations = getAnswerVariations(correct_answer)
-    is_correct_answer = process.extractOne(answer, correct_answer_variations, score_cutoff=90) != None
+    is_correct_answer = process.extractOne(answer, correct_answer_variations, score_cutoff=91) != None
 
     game_state['answers'].append({'answer': answer, 'sentence': reconstruct_sentence(original_sentence, answer, correct_answer), 'is_correct': is_correct_answer})
     if is_correct_answer:
